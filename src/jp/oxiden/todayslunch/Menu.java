@@ -13,7 +13,7 @@ public class Menu {
 	public Boolean curry;
 	public Date created_at;
 	public Date updated_at;
-	
+
 	@Override
 	public String toString() {
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy/MM/dd", Locale.JAPAN);
