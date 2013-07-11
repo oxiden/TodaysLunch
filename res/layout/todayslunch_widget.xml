@@ -9,13 +9,15 @@
         android:id="@+id/text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="WidgetSample"
+        android:text="@string/app_name"
         android:textColor="#ffffffff"
         />
-    <Button
-        android:id="@+id/button"
+    <TextView
+        android:id="@+id/menu"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Push!"
+        android:text="-----"
+        android:textColor="#ffffffff"
         />
+    
 </LinearLayout>

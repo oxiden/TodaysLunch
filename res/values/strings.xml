@@ -1,6 +1,5 @@
 <resources>
 
-    <string name="app_name">Today\'sLunch</string>
-    <string name="hello">Hello, my slaves!!</string>
+    <string name="app_name">今日のメニュー</string>
 
 </resources>
