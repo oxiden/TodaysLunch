@@ -4,15 +4,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
-
 import android.app.PendingIntent;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
@@ -48,8 +44,10 @@ public class RefreshMenuService extends Service {
 		// ？？処理ここでいいのか？？
 		if ("BUTTON_CLICK_ACTION".equals(intent.getAction())) {
 			Log.d(TAG, "detect onClick Event.==========================");
-			String s = getMenu(new Date()).toString();
-			rv.setTextViewText(R.id.menu, s);
+			Context context = getApplicationContext();
+			ComponentName thisWidget = new ComponentName(this, TodaysLunchWidget.class);
+			AppWidgetManager manager = AppWidgetManager.getInstance(this);
+			getMenu(new Date(), context, manager, thisWidget, rv);
 		}
 
 		// AppWidgetの更新
@@ -64,22 +62,16 @@ public class RefreshMenuService extends Service {
 	/*
 	 * RESTでメニューデータを取得する
 	 */
-	private String getMenu(Date date) {
-		RestTemplate template = new RestTemplate();
-		template.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-		String uri = getRESTURI(date);
-		try {
-			ResponseEntity<Menu> res = template.exchange(uri, HttpMethod.GET, null, Menu.class);
-			Menu menu = res.getBody();
-			return menu.toString();
-		} catch (Exception e) {
-			Log.d(TAG, "ERROR:" + e.toString());
-			return "ERROR:" + e.toString();
-		}
+	private void getMenu(Date date, Context context, AppWidgetManager awm, ComponentName thiswidget, RemoteViews rv) {
+		AsyncRetriever retr = new AsyncRetriever(context, awm, thiswidget, rv);
+		retr.execute(getRESTURI(date));
 	}
 
 	private String getRESTURI(Date date) {
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd", Locale.JAPAN);
+/*		date.setYear(2013-1900);
+		date.setMonth(7-1);
+		date.setDate(13);*/
 		return String.format("http://tweet-lunch-bot.herokuapp.com/shops/1/menus/%s.json", sdf1.format(date));
 	}
 }

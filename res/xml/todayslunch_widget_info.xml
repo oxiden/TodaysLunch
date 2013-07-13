@@ -4,5 +4,5 @@
     android:initialLayout="@layout/todayslunch_widget"
     android:minHeight="40dip"
     android:minWidth="80dip"
-    android:updatePeriodMillis="0">
+    android:updatePeriodMillis="10800000">
 </appwidget-provider>

@@ -1,4 +1,7 @@
 <resources>
+
     <string name="app_name">今日のメニュー</string>
     <string name="loading">(load menu data…)</string>
+    <string name="no_menudata">(メニュー情報なし)</string>
+
 </resources>

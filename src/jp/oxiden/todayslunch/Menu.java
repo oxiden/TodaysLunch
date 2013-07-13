@@ -4,7 +4,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import android.util.Log;
+
 public class Menu {
+	private final String TAG = "TodaysLunch";
 	public Integer shop_id;
 	public Integer id;
 	public Date release;
@@ -16,7 +19,11 @@ public class Menu {
 
 	@Override
 	public String toString() {
-		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy/MM/dd", Locale.JAPAN);
-		return sdf1.format(release) + ": " + title;
+		try {
+			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy/MM/dd", Locale.JAPAN);
+			return sdf1.format(release) + ": " + title;
+		} catch (Exception e) {
+			return "";
+		}
 	}
 }
