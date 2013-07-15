@@ -26,7 +26,7 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:background="#ff000000"
-            android:text="@string/loading"
+            android:text="@string/please_tap_me"
             android:textColor="#ffffffff"
             android:textSize="18sp" />
 

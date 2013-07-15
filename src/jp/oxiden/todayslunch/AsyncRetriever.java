@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
+import android.app.ProgressDialog;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -25,6 +26,15 @@ public class AsyncRetriever extends AsyncTask<String, Integer, Menu> {
 		_awm = awm;
 		_thiswidget = thiswidget;
 		_rv = rv;
+	}
+
+	@Override
+	protected void onPreExecute() {
+		Log.d(TAG, "onPreExecute----------------------------------");
+		_rv.setTextViewText(R.id.menu, _context.getResources().getString(R.string.loading));
+
+		// AppWidgetの更新
+		_awm.updateAppWidget(_thiswidget, _rv);
 	}
 
 	@Override
