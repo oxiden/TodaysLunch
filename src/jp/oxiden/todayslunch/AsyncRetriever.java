@@ -13,7 +13,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-public class AsyncRetriever extends AsyncTask<String, Integer, String> {
+public class AsyncRetriever extends AsyncTask<String, Integer, Menu> {
 	private final String TAG = "TodaysLunch";
 	private Context _context;
 	private AppWidgetManager _awm;
@@ -28,7 +28,7 @@ public class AsyncRetriever extends AsyncTask<String, Integer, String> {
 	}
 
 	@Override
-	protected String doInBackground(String... arg0) {
+	protected Menu doInBackground(String... arg0) {
 		Log.d(TAG, "doInBackground----------------------------------");
 		Log.d(TAG, "doInBackground: uri=" + arg0[0]);
 		try {
@@ -37,19 +37,27 @@ public class AsyncRetriever extends AsyncTask<String, Integer, String> {
 			ResponseEntity<Menu> res = template.exchange(arg0[0], HttpMethod.GET, null, Menu.class);
 			Menu menu = res.getBody();
 			Log.d(TAG, "doInBackground: success");
-			String result = menu.toString();
-			return TextUtils.isEmpty(result) ? _context.getResources().getString(R.string.no_menudata) : result;
+			return menu;
 		} catch (Exception e) {
 			Log.d(TAG, "doInBackground: fail", e);
-			return "ERROR:" + e.toString();
+			return null;
 		}
 	}
 
 	@Override
-	protected void onPostExecute(String result) {
+	protected void onPostExecute(Menu result) {
 		Log.d(TAG, "onPostExecute----------------------------------");
-		Log.d(TAG, "result=" + result);
-		_rv.setTextViewText(R.id.menu, result);
+
+		if (result.release != null && !TextUtils.isEmpty(result.title)) {
+			String s = String.format(_context.getResources().getString(R.string.widget_title), result.getRelease());
+			_rv.setTextViewText(R.id.text, s);
+			_rv.setTextViewText(R.id.menu, result.title);
+		} else {
+			String s = _context.getResources().getString(R.string.widget_title_default);
+			_rv.setTextViewText(R.id.text, s);
+			s = TextUtils.isEmpty(result.title) ? _context.getResources().getString(R.string.no_menudata) : result.title;
+			_rv.setTextViewText(R.id.menu, s);
+		}
 
 		// AppWidgetの更新
 		_awm.updateAppWidget(_thiswidget, _rv);

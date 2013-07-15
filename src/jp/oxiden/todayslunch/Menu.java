@@ -17,13 +17,12 @@ public class Menu {
 	public Date created_at;
 	public Date updated_at;
 
-	@Override
-	public String toString() {
-		try {
-			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy/MM/dd", Locale.JAPAN);
-			return sdf1.format(release) + ": " + title;
-		} catch (Exception e) {
+	public String getRelease() {
+		if (release == null) {
 			return "";
+		} else {
+			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy/MM/dd(E)", Locale.JAPAN);
+			return sdf1.format(release) + "";
 		}
 	}
 }

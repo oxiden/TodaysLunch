@@ -1,7 +1,10 @@
 <resources>
 
     <string name="app_name">今日のメニュー</string>
-    <string name="loading">(load menu data…)</string>
+    <string name="loading">(ここをタップしてメニューを取得してください)</string>
     <string name="no_menudata">(メニュー情報なし)</string>
+    <string name="widget_title">%sのメニュー</string>
+    <string name="widget_title_default">今日のメニュー(^ω^)ﾉ</string>
+    <string name="hyperlink">web</string>
 
 </resources>

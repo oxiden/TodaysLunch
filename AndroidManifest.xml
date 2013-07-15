@@ -31,7 +31,7 @@
             android:name="RefreshMenuService"
             android:exported="false" >
             <intent-filter>
-                <action android:name="BUTTON_CLICK_ACTION" />
+                <action android:name="FORCE_REFRESH_MENU" />
             </intent-filter>
         </service>
     </application>
