@@ -38,6 +38,11 @@ public class TodaysLunchWidget extends AppWidgetProvider {
 	@Override
 	public void onDeleted(Context context, int[] appWidgetIds) {
 		Log.d(TAG, "onDeleted----------------------------------");
+		
+		// サービスの停止
+		Intent intent = new Intent(context, RefreshMenuService.class);
+		context.stopService(intent);
+		Log.d(TAG, "service stpped.");
 		super.onDeleted(context, appWidgetIds);
 	}
 
