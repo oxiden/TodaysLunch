@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import android.app.ProgressDialog;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -71,6 +70,6 @@ public class AsyncRetriever extends AsyncTask<String, Integer, Menu> {
 
 		// AppWidgetの更新
 		_awm.updateAppWidget(_thiswidget, _rv);
-		Log.d(TAG, "update AppWidget(2).==========================");
+		Log.d(TAG, "update AppWidget(2).");
 	}
 }
