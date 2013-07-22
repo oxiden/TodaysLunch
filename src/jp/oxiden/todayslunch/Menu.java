@@ -18,11 +18,12 @@ public class Menu {
 	public Date updated_at;
 
 	public String getRelease() {
-		if (release == null) {
-			return "";
-		} else {
+		String result = "";
+		if (release != null) {
 			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy/MM/dd(E)", Locale.JAPAN);
-			return sdf1.format(release) + "";
+			result = sdf1.format(release);
 		}
+		Log.d(TAG, "Menu: getRelease=" + result);
+		return result;
 	}
 }
