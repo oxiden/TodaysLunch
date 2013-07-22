@@ -11,6 +11,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/widget_title_default"
+        android:background="#ff009900"
         android:textColor="#ffffffff"
         android:textSize="16sp" />
 
@@ -25,7 +26,7 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:background="#ff000000"
+            android:background="#aa000000"
             android:text="@string/please_tap_me"
             android:textColor="#ffffffff"
             android:textSize="18sp" />
