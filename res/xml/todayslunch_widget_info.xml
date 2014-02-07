@@ -2,7 +2,7 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:initialLayout="@layout/todayslunch_widget"
     android:minHeight="40dp"
-    android:minWidth="160dp"
+    android:minWidth="180dp"
     android:updatePeriodMillis="10800000" >
 
 </appwidget-provider>
