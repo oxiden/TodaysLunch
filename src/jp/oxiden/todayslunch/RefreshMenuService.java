@@ -56,7 +56,7 @@ public class RefreshMenuService extends Service {
 
 		// ボタン押下のインテントならテキスト更新
 		// ？？処理ここでいいのか？？
-		if (ACTION_NAME.equals(intent.getAction())) {
+		if (intent != null && ACTION_NAME.equals(intent.getAction())) {
 			Log.d(TAG, "detect onClick Event.");
 			forceRefresh(rv);
 		}
