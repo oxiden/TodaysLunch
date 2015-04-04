@@ -9,18 +9,16 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 public class TodaysLunchWidget extends AppWidgetProvider {
-	private final String TAG = "TodaysLunch";
 
 	//
 	// 一番はじめのWidget設置時のみ呼ばれる
 	//
 	@Override
 	public void onEnabled(Context context) {
-		Log.d(TAG, "onEnabled----------------------------------");
+		Util.log_d("onEnabled----------------------------------");
 		super.onEnabled(context);
 	}
 
@@ -29,13 +27,13 @@ public class TodaysLunchWidget extends AppWidgetProvider {
 	//
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-		Log.d(TAG, "onUpdate----------------------------------");
+		Util.log_d("onUpdate----------------------------------");
 		super.onUpdate(context, appWidgetManager, appWidgetIds);
 
 		// サービスの起動
 		Intent intent = new Intent(context, RefreshMenuService.class);
 		context.startService(intent);
-		Log.d(TAG, "service started.");
+		Util.log_d("service started.");
 	}
 
 	//
@@ -43,12 +41,12 @@ public class TodaysLunchWidget extends AppWidgetProvider {
 	//
 	@Override
 	public void onDeleted(Context context, int[] appWidgetIds) {
-		Log.d(TAG, "onDeleted----------------------------------");
+		Util.log_d("onDeleted----------------------------------");
 		
 		// サービスの停止
 		Intent intent = new Intent(context, RefreshMenuService.class);
 		context.stopService(intent);
-		Log.d(TAG, "service stpped.");
+		Util.log_d("service stpped.");
 		super.onDeleted(context, appWidgetIds);
 	}
 
@@ -57,7 +55,7 @@ public class TodaysLunchWidget extends AppWidgetProvider {
 	//
 	@Override
 	public void onDisabled(Context context) {
-		Log.d(TAG, "onDisabled----------------------------------");
+		Util.log_d("onDisabled----------------------------------");
 		super.onDisabled(context);
 	}
 
@@ -66,7 +64,7 @@ public class TodaysLunchWidget extends AppWidgetProvider {
 	//
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		Log.d(TAG, "onReceive====================================");
+		Util.log_d("onReceive====================================");
 		super.onReceive(context, intent);
 		RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.todayslunch_widget);
 		ComponentName thisWidget = new ComponentName(context, TodaysLunchWidget.class);

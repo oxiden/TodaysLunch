@@ -10,11 +10,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 public class AsyncRetriever extends AsyncTask<String, Integer, Menu> {
-	private final String TAG = "TodaysLunch";
 	private Context _context;
 	private AppWidgetManager _awm;
 	private ComponentName _thiswidget;
@@ -29,34 +27,39 @@ public class AsyncRetriever extends AsyncTask<String, Integer, Menu> {
 
 	@Override
 	protected void onPreExecute() {
-		Log.d(TAG, "onPreExecute----------------------------------");
-		_rv.setTextViewText(R.id.menu, _context.getResources().getString(R.string.loading));
+		Util.log_d("onPreExecute----------------------------------");
 
-		// AppWidgetの更新
+		// ローディング表示
+		_rv.setTextViewText(R.id.menu, _context.getResources().getString(R.string.loading));
 		_awm.updateAppWidget(_thiswidget, _rv);
+		Util.log_d("update AppWidget(1).");
 	}
 
 	@Override
 	protected Menu doInBackground(String... arg0) {
-		Log.d(TAG, "doInBackground----------------------------------");
-		Log.d(TAG, "doInBackground: uri=" + arg0[0]);
+		Util.log_d("doInBackground----------------------------------");
+		Util.log_d("doInBackground: uri=" + arg0[0]);
+
+		// RESTのレスポンスをMenuインスタンスとして返却
 		try {
 			RestTemplate template = new RestTemplate();
 			template.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 			ResponseEntity<Menu> res = template.exchange(arg0[0], HttpMethod.GET, null, Menu.class);
 			Menu menu = res.getBody();
-			Log.d(TAG, "doInBackground: success");
+			Util.log_d("doInBackground: success");
 			return menu;
 		} catch (Exception e) {
-			Log.d(TAG, "doInBackground: fail", e);
+			Util.log_d("doInBackground: fail");
+			Util.log_d("doInBackground: " + e.getStackTrace());
 			return null;
 		}
 	}
 
 	@Override
 	protected void onPostExecute(Menu result) {
-		Log.d(TAG, "onPostExecute----------------------------------");
+		Util.log_d("onPostExecute----------------------------------");
 
+		// RESTレスポンス(Menuオブジェクト)から結果を取得・表示
 		if (result.release != null && !TextUtils.isEmpty(result.title)) {
 			String s = String.format(_context.getResources().getString(R.string.widget_title), result.getRelease());
 			_rv.setTextViewText(R.id.text, s);
@@ -67,9 +70,7 @@ public class AsyncRetriever extends AsyncTask<String, Integer, Menu> {
 			s = TextUtils.isEmpty(result.title) ? _context.getResources().getString(R.string.no_menudata) : result.title;
 			_rv.setTextViewText(R.id.menu, s);
 		}
-
-		// AppWidgetの更新
 		_awm.updateAppWidget(_thiswidget, _rv);
-		Log.d(TAG, "update AppWidget(2).");
+		Util.log_d("update AppWidget(2).");
 	}
 }

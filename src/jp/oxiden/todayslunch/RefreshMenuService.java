@@ -12,7 +12,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.IBinder;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 //
@@ -21,7 +20,6 @@ import android.widget.RemoteViews;
 // 
 
 public class RefreshMenuService extends Service {
-	private final String TAG = "TodaysLunch";
 	private final String ACTION_NAME = "FORCE_REFRESH_MENU";
 
 	//
@@ -31,7 +29,7 @@ public class RefreshMenuService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		Log.d(TAG, "onCreate----------------------------------");
+		Util.log_d("onCreate----------------------------------");
 	}
 
 	@Override
@@ -44,7 +42,7 @@ public class RefreshMenuService extends Service {
 	//
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		Log.d(TAG, "onStartCommand----------------------------------");
+		Util.log_d("onStartCommand----------------------------------");
 		RemoteViews rv = new RemoteViews(getPackageName(), R.layout.todayslunch_widget);
 
 		// テキスト押下イベントでインテント発行
@@ -52,12 +50,12 @@ public class RefreshMenuService extends Service {
 		textIntent.setAction(ACTION_NAME);
 		PendingIntent pendingIntent = PendingIntent.getService(this, 0, textIntent, 0);
 		rv.setOnClickPendingIntent(R.id.menu, pendingIntent);
-		Log.d(TAG, "onClickListener set.");
+		Util.log_d("onClickListener set.");
 
 		// ボタン押下のインテントならテキスト更新
 		// ？？処理ここでいいのか？？
 		if (intent != null && ACTION_NAME.equals(intent.getAction())) {
-			Log.d(TAG, "detect onClick Event.");
+			Util.log_d("detect onClick Event.");
 			forceRefresh(rv);
 		}
 
@@ -70,7 +68,7 @@ public class RefreshMenuService extends Service {
 		ComponentName thisWidget = new ComponentName(this, TodaysLunchWidget.class);
 		AppWidgetManager manager = AppWidgetManager.getInstance(this);
 		manager.updateAppWidget(thisWidget, rv);
-		Log.d(TAG, "update AppWidget.");
+		Util.log_d("update AppWidget.");
 
 		return startId;
 	}
