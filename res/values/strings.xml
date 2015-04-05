@@ -7,5 +7,6 @@
     <string name="widget_title">%sのメニュー</string>
     <string name="widget_title_default">今日のメニュー(^ω^)ﾉ</string>
     <string name="hyperlink">web</string>
+    <string name="network_error">(通信エラー)</string>
 
 </resources>

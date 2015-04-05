@@ -9,7 +9,6 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.text.TextUtils;
 import android.widget.RemoteViews;
 
 public class AsyncRetriever extends AsyncTask<String, Integer, Menu> {
@@ -49,8 +48,7 @@ public class AsyncRetriever extends AsyncTask<String, Integer, Menu> {
 			Util.log_d("doInBackground: success");
 			return menu;
 		} catch (Exception e) {
-			Util.log_d("doInBackground: fail");
-			Util.log_d("doInBackground: " + e.getStackTrace());
+			Util.log_e(e, "AsyncRetriever::doInBackground");
 			return null;
 		}
 	}
@@ -60,15 +58,28 @@ public class AsyncRetriever extends AsyncTask<String, Integer, Menu> {
 		Util.log_d("onPostExecute----------------------------------");
 
 		// RESTレスポンス(Menuオブジェクト)から結果を取得・表示
-		if (result.release != null && !TextUtils.isEmpty(result.title)) {
-			String s = String.format(_context.getResources().getString(R.string.widget_title), result.getRelease());
-			_rv.setTextViewText(R.id.text, s);
-			_rv.setTextViewText(R.id.menu, result.title);
+		String title, text;
+		if (result != null) {
+			title = result.getTitle();
+			if (!title.isEmpty()) {
+				// 成功
+				text = String.format(_context.getResources().getString(R.string.widget_title), result.getRelease());
+				_rv.setTextViewText(R.id.text, text);
+				// title =
+				_rv.setTextViewText(R.id.menu, title);
+			} else {
+				// 休業日などメニュー無し
+				text = _context.getResources().getString(R.string.widget_title_default);
+				_rv.setTextViewText(R.id.text, text);
+				title = _context.getResources().getString(R.string.no_menudata);
+				_rv.setTextViewText(R.id.menu, title);
+			}
 		} else {
-			String s = _context.getResources().getString(R.string.widget_title_default);
-			_rv.setTextViewText(R.id.text, s);
-			s = TextUtils.isEmpty(result.title) ? _context.getResources().getString(R.string.no_menudata) : result.title;
-			_rv.setTextViewText(R.id.menu, s);
+			// 通信エラー
+			text = _context.getResources().getString(R.string.widget_title_default);
+			_rv.setTextViewText(R.id.text, text);
+			title = _context.getResources().getString(R.string.network_error);
+			_rv.setTextViewText(R.id.menu, title);
 		}
 		_awm.updateAppWidget(_thiswidget, _rv);
 		Util.log_d("update AppWidget(2).");

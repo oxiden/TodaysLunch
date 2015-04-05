@@ -1,8 +1,6 @@
 package jp.oxiden.todayslunch;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import android.app.PendingIntent;
 import android.app.Service;
@@ -13,6 +11,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.IBinder;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 //
 // サービスで、テキスト押下でPendingIntentが発行されるようにする。
@@ -84,16 +83,13 @@ public class RefreshMenuService extends Service {
 	}
 
 	private void getMenu(Date date, Context context, AppWidgetManager awm, ComponentName thiswidget, RemoteViews rv) {
-		AsyncRetriever retr = new AsyncRetriever(context, awm, thiswidget, rv);
-		retr.execute(getRESTURI(date));
+		// メニュー情報更新(テキストタップによる手動更新)
+		try {
+			AsyncRetriever retr = new AsyncRetriever(context, awm, thiswidget, rv);
+			retr.execute(Util.getRESTURI(date));
+		} catch (Exception e) {
+			Toast.makeText(context, "ERROR:" + e.getMessage(), Toast.LENGTH_LONG).show();
+			Util.log_e(e, "RefreshMenuService::getMenu");
+		}
 	}
-
-	private String getRESTURI(Date date) {
-		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd", Locale.JAPAN);
-		// date.setYear(2013-1900);
-		// date.setMonth(7-1);
-		// date.setDate(23);
-		return String.format("http://tweet-lunch-bot.herokuapp.com/shops/1/menus/%s.json", sdf1.format(date));
-	}
-
 }
