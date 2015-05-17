@@ -6,7 +6,6 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.client.RestTemplate;
 
 import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.RemoteViews;
@@ -14,14 +13,14 @@ import android.widget.RemoteViews;
 public class AsyncRetriever extends AsyncTask<String, Integer, Menu> {
 	private Context _context;
 	private AppWidgetManager _awm;
-	private ComponentName _thiswidget;
 	private RemoteViews _rv;
+	private int _appWidgetId;
 
-	public AsyncRetriever(Context context, AppWidgetManager awm, ComponentName thiswidget, RemoteViews rv) {
+	public AsyncRetriever(Context context, AppWidgetManager awm, RemoteViews rv, int appWidgetId) {
 		_context = context;
 		_awm = awm;
-		_thiswidget = thiswidget;
 		_rv = rv;
+		_appWidgetId = appWidgetId;
 	}
 
 	@Override
@@ -30,7 +29,7 @@ public class AsyncRetriever extends AsyncTask<String, Integer, Menu> {
 
 		// ローディング表示
 		_rv.setTextViewText(R.id.menu, _context.getResources().getString(R.string.loading));
-		_awm.updateAppWidget(_thiswidget, _rv);
+		_awm.updateAppWidget(_appWidgetId, _rv);
 		Util.log_d("update AppWidget(1).");
 	}
 
@@ -81,7 +80,7 @@ public class AsyncRetriever extends AsyncTask<String, Integer, Menu> {
 			title = _context.getResources().getString(R.string.network_error);
 			_rv.setTextViewText(R.id.menu, title);
 		}
-		_awm.updateAppWidget(_thiswidget, _rv);
+		_awm.updateAppWidget(_appWidgetId, _rv);
 		Util.log_d("update AppWidget(2).");
 	}
 }

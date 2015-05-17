@@ -5,7 +5,6 @@ import java.util.Date;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -20,6 +19,8 @@ import android.widget.Toast;
 
 public class RefreshMenuService extends Service {
 	private final String ACTION_NAME = "FORCE_REFRESH_MENU";
+	private final int DEFAULT_WIDGET_ID = 0;
+	private int _appWidgetId = DEFAULT_WIDGET_ID;
 
 	//
 	// 一番はじめのService起動時のみ呼ばれる
@@ -42,12 +43,21 @@ public class RefreshMenuService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Util.log_d("onStartCommand------------");
+
+		if (intent != null) {
+			_appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, DEFAULT_WIDGET_ID);
+		} else {
+			_appWidgetId = DEFAULT_WIDGET_ID;
+		}
+		Util.log_d("appWidgetId:" + _appWidgetId);
+
 		RemoteViews rv = new RemoteViews(getPackageName(), R.layout.todayslunch_widget);
 
 		// テキスト押下イベントでインテント発行
 		Intent textIntent = new Intent();
 		textIntent.setAction(ACTION_NAME);
-		PendingIntent pendingIntent = PendingIntent.getService(this, 0, textIntent, 0);
+		textIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, _appWidgetId);
+		PendingIntent pendingIntent = PendingIntent.getService(this, _appWidgetId, textIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		rv.setOnClickPendingIntent(R.id.menu, pendingIntent);
 		Util.log_d("onClickListener set.");
 
@@ -60,13 +70,12 @@ public class RefreshMenuService extends Service {
 
 		// webボタン押下イベントでインテント(ブラウザ)起動
 		Intent textIntent2 = new Intent(Intent.ACTION_VIEW, Uri.parse("http://tweet-lunch-bot.herokuapp.com/shops/1/menus"));
-		PendingIntent pendingIntent2 = PendingIntent.getActivity(this, 0, textIntent2, 0);
+		PendingIntent pendingIntent2 = PendingIntent.getActivity(this, _appWidgetId, textIntent2, PendingIntent.FLAG_UPDATE_CURRENT);
 		rv.setOnClickPendingIntent(R.id.heroku, pendingIntent2);
 
 		// AppWidgetの更新
-		ComponentName thisWidget = new ComponentName(this, TodaysLunchWidget.class);
 		AppWidgetManager manager = AppWidgetManager.getInstance(this);
-		manager.updateAppWidget(thisWidget, rv);
+		manager.updateAppWidget(_appWidgetId, rv);
 		Util.log_d("update AppWidget.");
 
 		return startId;
@@ -77,15 +86,14 @@ public class RefreshMenuService extends Service {
 	//
 	public void forceRefresh(RemoteViews rv) {
 		Context context = getApplicationContext();
-		ComponentName thisWidget = new ComponentName(this, TodaysLunchWidget.class);
 		AppWidgetManager manager = AppWidgetManager.getInstance(this);
-		getMenu(new Date(), context, manager, thisWidget, rv);
+		getMenu(new Date(), context, manager, rv);
 	}
 
-	private void getMenu(Date date, Context context, AppWidgetManager awm, ComponentName thiswidget, RemoteViews rv) {
+	private void getMenu(Date date, Context context, AppWidgetManager awm, RemoteViews rv) {
 		// メニュー情報更新(テキストタップによる手動更新)
 		try {
-			AsyncRetriever retr = new AsyncRetriever(context, awm, thiswidget, rv);
+			AsyncRetriever retr = new AsyncRetriever(context, awm, rv, _appWidgetId);
 			retr.execute(Util.getRESTURI(date));
 		} catch (Exception e) {
 			Toast.makeText(context, "ERROR:" + e.getMessage(), Toast.LENGTH_LONG).show();

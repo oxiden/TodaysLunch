@@ -6,7 +6,6 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
@@ -30,18 +29,27 @@ public class TodaysLunchWidget extends AppWidgetProvider {
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 		Util.log_d("onUpdate----------------------------------");
 
-		// サービスの起動
-		if (isRunningRefreshMenuService(context)) {
-			context.stopService(new Intent(context, RefreshMenuService.class));
-			Util.log_d("service stopped.");
-		}
-		if (!isRunningRefreshMenuService(context)) {
-		    context.startService(new Intent(context, RefreshMenuService.class));
-		    Util.log_d("service started.");
-		}
+		// 対象ウィジェットに対する再描画＆サービス起動
+		Util.log_d("appWidgetIds:" + appWidgetIds.length);
+		for (int appWidgetId : appWidgetIds) {
+			Util.log_d("appWidgetId:" + appWidgetId);
 
-		// メニュー情報更新(一定間隔の自動更新)
-		drawWidget(context);
+			if (isRunningRefreshMenuService(context)) {
+				Intent intent = new Intent(context, RefreshMenuService.class);
+				intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+				context.stopService(intent);
+				Util.log_d("service stopped.");
+			}
+			if (!isRunningRefreshMenuService(context)) {
+				Intent intent = new Intent(context, RefreshMenuService.class);
+				intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+				context.startService(intent);
+				Util.log_d("service started.");
+			}
+
+			// メニュー情報更新(一定間隔の自動更新)
+			drawWidget(context, appWidgetId);
+		}
 
 		super.onUpdate(context, appWidgetManager, appWidgetIds);
 	}
@@ -53,10 +61,17 @@ public class TodaysLunchWidget extends AppWidgetProvider {
 	public void onDeleted(Context context, int[] appWidgetIds) {
 		Util.log_d("onDeleted----------------------------------");
 
-		// サービスの停止
-		if (isRunningRefreshMenuService(context)) {
-			context.stopService(new Intent(context, RefreshMenuService.class));
-			Util.log_d("service stopped.");
+		// 対象ウィジェットに対するサービス停止
+		Util.log_d("appWidgetIds:" + appWidgetIds.length);
+		for (int appWidgetId : appWidgetIds) {
+			Util.log_d("appWidgetId:" + appWidgetId);
+
+			if (isRunningRefreshMenuService(context)) {
+				Intent intent = new Intent(context, RefreshMenuService.class);
+				intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+				context.stopService(intent);
+				Util.log_d("service stopped.");
+			}
 		}
 
 		super.onDeleted(context, appWidgetIds);
@@ -80,13 +95,12 @@ public class TodaysLunchWidget extends AppWidgetProvider {
 		super.onReceive(context, intent);
 	}
 
-	// 全ウィジェットの再描画
-	private void drawWidget(Context context) {
+	// ウィジェットの再描画
+	private void drawWidget(Context context, int appWidgetId) {
 		try {
 			RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.todayslunch_widget);
-			ComponentName thisWidget = new ComponentName(context, TodaysLunchWidget.class);
 			AppWidgetManager manager = AppWidgetManager.getInstance(context);
-			AsyncRetriever retr = new AsyncRetriever(context, manager, thisWidget, rv);
+			AsyncRetriever retr = new AsyncRetriever(context, manager, rv, appWidgetId);
 			retr.execute(Util.getRESTURI(new Date()));
 		} catch (Exception e) {
 			Toast.makeText(context, "ERROR:" + e.getMessage(), Toast.LENGTH_LONG).show();
