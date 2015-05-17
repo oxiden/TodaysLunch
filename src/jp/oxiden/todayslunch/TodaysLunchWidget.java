@@ -64,7 +64,7 @@ public class TodaysLunchWidget extends AppWidgetProvider {
 	//
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		Util.log_d("onReceive====================================");
+		Util.log_d("onReceive----------------------------------");
 		super.onReceive(context, intent);
 		// メニュー情報更新(一定間隔の自動更新)
 		try {

@@ -28,7 +28,7 @@ public class RefreshMenuService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		Util.log_d("onCreate----------------------------------");
+		Util.log_d("onCreate------------");
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class RefreshMenuService extends Service {
 	//
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		Util.log_d("onStartCommand----------------------------------");
+		Util.log_d("onStartCommand------------");
 		RemoteViews rv = new RemoteViews(getPackageName(), R.layout.todayslunch_widget);
 
 		// テキスト押下イベントでインテント発行

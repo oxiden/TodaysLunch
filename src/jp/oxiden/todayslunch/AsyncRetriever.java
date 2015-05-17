@@ -26,7 +26,7 @@ public class AsyncRetriever extends AsyncTask<String, Integer, Menu> {
 
 	@Override
 	protected void onPreExecute() {
-		Util.log_d("onPreExecute----------------------------------");
+		Util.log_d("onPreExecute------------");
 
 		// ローディング表示
 		_rv.setTextViewText(R.id.menu, _context.getResources().getString(R.string.loading));
@@ -36,7 +36,7 @@ public class AsyncRetriever extends AsyncTask<String, Integer, Menu> {
 
 	@Override
 	protected Menu doInBackground(String... arg0) {
-		Util.log_d("doInBackground----------------------------------");
+		Util.log_d("doInBackground------------");
 		Util.log_d("doInBackground: uri=" + arg0[0]);
 
 		// RESTのレスポンスをMenuインスタンスとして返却
@@ -55,7 +55,7 @@ public class AsyncRetriever extends AsyncTask<String, Integer, Menu> {
 
 	@Override
 	protected void onPostExecute(Menu result) {
-		Util.log_d("onPostExecute----------------------------------");
+		Util.log_d("onPostExecute------------");
 
 		// RESTレスポンス(Menuオブジェクト)から結果を取得・表示
 		String title, text;
