@@ -2,6 +2,8 @@ package jp.oxiden.todayslunch;
 
 import java.util.Date;
 
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
@@ -27,12 +29,21 @@ public class TodaysLunchWidget extends AppWidgetProvider {
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 		Util.log_d("onUpdate----------------------------------");
-		super.onUpdate(context, appWidgetManager, appWidgetIds);
 
 		// サービスの起動
-		Intent intent = new Intent(context, RefreshMenuService.class);
-		context.startService(intent);
-		Util.log_d("service started.");
+		if (isRunningRefreshMenuService(context)) {
+			context.stopService(new Intent(context, RefreshMenuService.class));
+			Util.log_d("service stopped.");
+		}
+		if (!isRunningRefreshMenuService(context)) {
+		    context.startService(new Intent(context, RefreshMenuService.class));
+		    Util.log_d("service started.");
+		}
+
+		// メニュー情報更新(一定間隔の自動更新)
+		drawWidget(context);
+
+		super.onUpdate(context, appWidgetManager, appWidgetIds);
 	}
 
 	//
@@ -43,9 +54,10 @@ public class TodaysLunchWidget extends AppWidgetProvider {
 		Util.log_d("onDeleted----------------------------------");
 
 		// サービスの停止
-		Intent intent = new Intent(context, RefreshMenuService.class);
-		context.stopService(intent);
-		Util.log_d("service stopped.");
+		if (isRunningRefreshMenuService(context)) {
+			context.stopService(new Intent(context, RefreshMenuService.class));
+			Util.log_d("service stopped.");
+		}
 
 		super.onDeleted(context, appWidgetIds);
 	}
@@ -66,7 +78,10 @@ public class TodaysLunchWidget extends AppWidgetProvider {
 	public void onReceive(Context context, Intent intent) {
 		Util.log_d("onReceive----------------------------------");
 		super.onReceive(context, intent);
-		// メニュー情報更新(一定間隔の自動更新)
+	}
+
+	// 全ウィジェットの再描画
+	private void drawWidget(Context context) {
 		try {
 			RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.todayslunch_widget);
 			ComponentName thisWidget = new ComponentName(context, TodaysLunchWidget.class);
@@ -77,5 +92,15 @@ public class TodaysLunchWidget extends AppWidgetProvider {
 			Toast.makeText(context, "ERROR:" + e.getMessage(), Toast.LENGTH_LONG).show();
 			Util.log_e(e, "TodaysLunchWidget::onReceive");
 		}
+	}
+
+	// テキストタップ応答用サービスがRunning状態か？
+	private boolean isRunningRefreshMenuService(Context context) {
+		boolean result = false;
+		ActivityManager manager = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+		for (RunningServiceInfo si: manager.getRunningServices(Integer.MAX_VALUE)) {
+			result = result || RefreshMenuService.class.getName().equals(si.service.getClassName());
+		}
+		return result;
 	}
 }
