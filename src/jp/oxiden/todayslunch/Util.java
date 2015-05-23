@@ -27,4 +27,15 @@ public class Util {
 		// date.setDate(23);
 		return String.format("http://tweet-lunch-bot.herokuapp.com/shops/1/menus/%s.json", sdf1.format(date));
 	}
+
+	public static boolean isInternetConnected(Context context) {
+		ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo ni = cm.getActiveNetworkInfo();
+		if (ni != null) {
+			log_d("isInternetConnected: " + ni.toString());
+		} else {
+			log_d("isInternetConnected: network is unreachable(ni=null)");
+		}
+		return (ni != null && ni.isConnected());
+	}
 }

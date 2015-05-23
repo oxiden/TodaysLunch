@@ -9,5 +9,6 @@
     <string name="hyperlink">web</string>
     <string name="network_error">(通信エラー)</string>
     <string name="hyperlink_description">go website</string>
+    <string name="internet_unreachable">(ネットワーク接続なし)</string>
 
 </resources>

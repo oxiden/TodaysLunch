@@ -10,7 +10,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.RemoteViews;
 
-public class AsyncRetriever extends AsyncTask<String, Integer, Menu> {
+public class AsyncRetriever extends AsyncTask<String, Integer, ResponseData> {
 	private Context _context;
 	private AppWidgetManager _awm;
 	private RemoteViews _rv;
@@ -34,51 +34,64 @@ public class AsyncRetriever extends AsyncTask<String, Integer, Menu> {
 	}
 
 	@Override
-	protected Menu doInBackground(String... arg0) {
+	protected ResponseData doInBackground(String... arg0) {
 		Util.log_d("doInBackground------------");
 		Util.log_d("doInBackground: uri=" + arg0[0]);
 
 		// RESTのレスポンスをMenuインスタンスとして返却
 		try {
-			RestTemplate template = new RestTemplate();
-			template.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-			ResponseEntity<Menu> res = template.exchange(arg0[0], HttpMethod.GET, null, Menu.class);
-			Menu menu = res.getBody();
-			Util.log_d("doInBackground: success");
-			return menu;
+			if (Util.isInternetConnected(_context)) {
+				RestTemplate template = new RestTemplate();
+				template.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+				ResponseEntity<Menu> res = template.exchange(arg0[0], HttpMethod.GET, null, Menu.class);
+				Menu menu = res.getBody();
+				Util.log_d("doInBackground: success");
+				return new ResponseData(menu);
+			} else {
+				return new ResponseData(ResponseData.ErrorType.NETWORK_OFFLINE);
+			}
 		} catch (Exception e) {
 			Util.log_e(e, "AsyncRetriever::doInBackground");
-			return null;
+			return new ResponseData(ResponseData.ErrorType.UNKNOWN);
 		}
 	}
 
 	@Override
-	protected void onPostExecute(Menu result) {
+	protected void onPostExecute(ResponseData result) {
 		Util.log_d("onPostExecute------------");
 
 		// RESTレスポンス(Menuオブジェクト)から結果を取得・表示
-		String title, text;
+		int textId, titleId;
+		textId = titleId = R.string.app_name;// dummy value
 		if (result != null) {
-			title = result.getTitle();
-			if (!title.isEmpty()) {
-				// 成功
-				text = String.format(_context.getResources().getString(R.string.widget_title), result.getRelease());
-				_rv.setTextViewText(R.id.text, text);
-				// title =
-				_rv.setTextViewText(R.id.menu, title);
+			if (result.error == ResponseData.ErrorType.NETWORK_OFFLINE) {
+				// ネットワーク接続なし
+				textId = R.string.widget_title_default;
+				titleId = R.string.internet_unreachable;
 			} else {
-				// 休業日などメニュー無し
-				text = _context.getResources().getString(R.string.widget_title_default);
-				_rv.setTextViewText(R.id.text, text);
-				title = _context.getResources().getString(R.string.no_menudata);
-				_rv.setTextViewText(R.id.menu, title);
+				// ASSERT result.error == ResponseData.ErrorType.NO_ERROR
+				if (!result.menu.getTitle().isEmpty()) {
+					// 成功
+					_rv.setTextViewText(R.id.text, String.format(_context.getResources().getString(R.string.widget_title), result.menu.getRelease()));
+					_rv.setTextViewText(R.id.menu, result.menu.getTitle());
+					textId = titleId = R.string.app_name;// dummy value
+				} else {
+					// 休業日などメニュー無し
+					textId = R.string.widget_title_default;
+					titleId = R.string.no_menudata;
+				}
 			}
 		} else {
-			// 通信エラー
-			text = _context.getResources().getString(R.string.widget_title_default);
-			_rv.setTextViewText(R.id.text, text);
-			title = _context.getResources().getString(R.string.network_error);
-			_rv.setTextViewText(R.id.menu, title);
+			// 通信エラー(ということにする)
+			textId = R.string.widget_title_default;
+			titleId = R.string.network_error;
+		}
+
+		if (textId != R.string.app_name) {
+			_rv.setTextViewText(R.id.text, _context.getResources().getString(textId));
+		}
+		if (titleId != R.string.app_name) {
+			_rv.setTextViewText(R.id.menu, _context.getResources().getString(titleId));
 		}
 		_awm.updateAppWidget(_appWidgetId, _rv);
 		Util.log_d("update AppWidget(2).");
