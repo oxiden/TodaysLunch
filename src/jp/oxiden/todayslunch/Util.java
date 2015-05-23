@@ -4,20 +4,23 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 public class Util {
 	private static final String TAG = "TodaysLunch";
 
 	public static void log_d(String s) {
-		Log.d(TAG, String.format("%03d: %s", Thread.currentThread().getId(), s));
+		Log.d(TAG, String.format("%04d: %s", Thread.currentThread().getId(), s));
 	}
 
 	public static void log_e(Exception e, String s) {
 		long threadId = Thread.currentThread().getId();
-		Log.e(TAG, String.format("%03d: ERROR: %s", threadId, s));
-		Log.e(TAG, String.format("%03d: ERROR: %s", threadId, e.getMessage()));
-		Log.e(TAG, String.format("%03d: ERROR: %s", threadId, e.getStackTrace()));
+		Log.e(TAG, String.format("%04d: ERROR: %s", threadId, s));
+		Log.e(TAG, String.format("%04d: ERROR: %s", threadId, e.getMessage()));
+		Log.e(TAG, String.format("%04d: ERROR: %s", threadId, e.getStackTrace()));
 	}
 
 	public static String getRESTURI(Date date) {
