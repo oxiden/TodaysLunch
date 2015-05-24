@@ -57,8 +57,8 @@ public class RefreshMenuService extends Service {
 		Intent textIntent = new Intent();
 		textIntent.setAction(ACTION_NAME);
 		textIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, _appWidgetId);
-		PendingIntent pendingIntent = PendingIntent.getService(this, _appWidgetId, textIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-		rv.setOnClickPendingIntent(R.id.menu, pendingIntent);
+		PendingIntent textPendingIntent = PendingIntent.getService(this, _appWidgetId, textIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		rv.setOnClickPendingIntent(R.id.text, textPendingIntent);
 		Util.log_d("onClickListener set.");
 
 		// ボタン押下のインテントならテキスト更新
@@ -69,9 +69,9 @@ public class RefreshMenuService extends Service {
 		}
 
 		// webボタン押下イベントでインテント(ブラウザ)起動
-		Intent textIntent2 = new Intent(Intent.ACTION_VIEW, Uri.parse("http://tweet-lunch-bot.herokuapp.com/shops/1/menus"));
-		PendingIntent pendingIntent2 = PendingIntent.getActivity(this, _appWidgetId, textIntent2, PendingIntent.FLAG_UPDATE_CURRENT);
-		rv.setOnClickPendingIntent(R.id.heroku, pendingIntent2);
+		Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://tweet-lunch-bot.herokuapp.com/shops/1/menus"));
+		PendingIntent webPendingIntent = PendingIntent.getActivity(this, _appWidgetId, webIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		rv.setOnClickPendingIntent(R.id.web, webPendingIntent);
 
 		// AppWidgetの更新
 		AppWidgetManager manager = AppWidgetManager.getInstance(this);

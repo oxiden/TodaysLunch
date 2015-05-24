@@ -14,7 +14,7 @@ public class Menu {
 	public Date created_at;
 	public Date updated_at;
 
-	public String getTitle() {
+	public String getText() {
 		return (title != null && !title.isEmpty()) ? title : "";
 	}
 

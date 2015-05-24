@@ -18,13 +18,13 @@
         android:paddingTop="4dp" >
 
         <ImageView
-            android:id="@+id/heroku"
+            android:id="@+id/web"
             android:layout_width="48dp"
             android:layout_height="52dp"
             android:background="@layout/image_outline"
-            android:contentDescription="@string/hyperlink_description"
+            android:contentDescription="@string/web_description"
             android:scaleType="fitXY"
-            android:src="@drawable/ic_heroku" />
+            android:src="@drawable/ic_web" />
 
     </LinearLayout>
 
@@ -38,23 +38,23 @@
         android:paddingTop="4dp" >
 
         <TextView
-            android:id="@+id/text"
+            android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@layout/titlebar_outline"
             android:paddingLeft="2dp"
             android:paddingRight="0dp"
-            android:text="@string/widget_title_default"
+            android:text="@string/title_default"
             android:textColor="#ffffffff"
             android:textSize="12sp" />
 
         <TextView
-            android:id="@+id/menu"
+            android:id="@+id/text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingLeft="2dp"
             android:paddingRight="2dp"
-            android:text="@string/please_tap_me"
+            android:text="@string/text_tapme"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textSize="14sp" />
     </LinearLayout>

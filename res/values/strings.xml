@@ -1,14 +1,13 @@
 <resources>
 
     <string name="app_name">今日のメニュー</string>
-    <string name="please_tap_me">(ここをタップして最新メニュー情報を取得)</string>
-    <string name="loading">データ受信中…</string>
-    <string name="no_menudata">(メニュー情報なし)</string>
-    <string name="widget_title">%sのメニュー</string>
-    <string name="widget_title_default">今日のメニュー(^ω^)ﾉ</string>
-    <string name="hyperlink">web</string>
-    <string name="network_error">(通信エラー)</string>
-    <string name="hyperlink_description">go website</string>
-    <string name="internet_unreachable">(ネットワーク接続なし)</string>
+    <string name="text_tapme">(ここをタップして最新メニュー情報を取得)</string>
+    <string name="text_loading">データ受信中…</string>
+    <string name="text_no_menudata">(メニュー情報なし)</string>
+    <string name="title_template">%sのメニュー</string>
+    <string name="title_default">今日のメニュー(^ω^)ﾉ</string>
+    <string name="text_network_error">(通信エラー)</string>
+    <string name="web_description">go website</string>
+    <string name="text_internet_unreachable">(ネットワーク接続なし)</string>
 
 </resources>

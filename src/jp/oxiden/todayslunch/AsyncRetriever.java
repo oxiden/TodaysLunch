@@ -28,7 +28,7 @@ public class AsyncRetriever extends AsyncTask<String, Integer, ResponseData> {
 		Util.log_d("onPreExecute------------");
 
 		// ローディング表示
-		_rv.setTextViewText(R.id.menu, _context.getResources().getString(R.string.loading));
+		_rv.setTextViewText(R.id.text, _context.getResources().getString(R.string.text_loading));
 		_awm.updateAppWidget(_appWidgetId, _rv);
 		Util.log_d("update AppWidget(1).");
 	}
@@ -61,37 +61,37 @@ public class AsyncRetriever extends AsyncTask<String, Integer, ResponseData> {
 		Util.log_d("onPostExecute------------");
 
 		// RESTレスポンス(Menuオブジェクト)から結果を取得・表示
-		int textId, titleId;
-		textId = titleId = R.string.app_name;// dummy value
+		int titleId, textId;
+		titleId = textId = R.string.app_name;// dummy value
 		if (result != null) {
 			if (result.error == ResponseData.ErrorType.NETWORK_OFFLINE) {
 				// ネットワーク接続なし
-				textId = R.string.widget_title_default;
-				titleId = R.string.internet_unreachable;
+				titleId = R.string.title_default;
+				textId = R.string.text_internet_unreachable;
 			} else {
 				// ASSERT result.error == ResponseData.ErrorType.NO_ERROR
-				if (!result.menu.getTitle().isEmpty()) {
+				if (!result.menu.getText().isEmpty()) {
 					// 成功
-					_rv.setTextViewText(R.id.text, String.format(_context.getResources().getString(R.string.widget_title), result.menu.getRelease()));
-					_rv.setTextViewText(R.id.menu, result.menu.getTitle());
-					textId = titleId = R.string.app_name;// dummy value
+					_rv.setTextViewText(R.id.title, String.format(_context.getResources().getString(R.string.title_template), result.menu.getRelease()));
+					_rv.setTextViewText(R.id.text, result.menu.getText());
+					titleId = textId = R.string.app_name;// dummy value
 				} else {
 					// 休業日などメニュー無し
-					textId = R.string.widget_title_default;
-					titleId = R.string.no_menudata;
+					titleId = R.string.title_default;
+					textId = R.string.text_no_menudata;
 				}
 			}
 		} else {
 			// 通信エラー(ということにする)
-			textId = R.string.widget_title_default;
-			titleId = R.string.network_error;
+			titleId = R.string.title_default;
+			textId = R.string.text_network_error;
 		}
 
+		if (titleId != R.string.app_name) {
+			_rv.setTextViewText(R.id.title, _context.getResources().getString(titleId));
+		}
 		if (textId != R.string.app_name) {
 			_rv.setTextViewText(R.id.text, _context.getResources().getString(textId));
-		}
-		if (titleId != R.string.app_name) {
-			_rv.setTextViewText(R.id.menu, _context.getResources().getString(titleId));
 		}
 		_awm.updateAppWidget(_appWidgetId, _rv);
 		Util.log_d("update AppWidget(2).");
