@@ -68,6 +68,10 @@ public class AsyncRetriever extends AsyncTask<String, Integer, ResponseData> {
 				// ネットワーク接続なし
 				titleId = R.string.title_default;
 				textId = R.string.text_internet_unreachable;
+			} else if (result.error == ResponseData.ErrorType.UNKNOWN) {
+				// 通信エラー(ということにする)
+				titleId = R.string.title_default;
+				textId = R.string.text_network_error;
 			} else {
 				// ASSERT result.error == ResponseData.ErrorType.NO_ERROR
 				if (!result.menu.getText().isEmpty()) {
